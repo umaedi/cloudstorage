@@ -20,9 +20,7 @@ RUN composer install --no-dev --optimize-autoloader
 
 RUN mkdir -p storage bootstrap/cache \
  && chown -R www-data:www-data storage bootstrap/cache \
- && chown -R www-data:www-data database database.sqlite \
- && chmod -R 775 storage bootstrap/cache \
- && php artisan migrate
+ && chmod -R 775 storage bootstrap/cache
 
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
