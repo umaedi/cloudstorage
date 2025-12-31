@@ -33,7 +33,7 @@ services:
             - proxy
 
 networks:
-    s3-net:
+    cloud-net:
         internal: true
     host-access:
         driver: bridge
