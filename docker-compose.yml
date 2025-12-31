@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+    app:
+        image: cloud-app
+        container_name: cloud-app
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: unless-stopped
+        working_dir: /var/www
+        volumes:
+            - ./.env:/var/www/.env
+            - ./storage:/var/www/storage
+        networks:
+            - cloud-net
+            - host-access
+
+    web:
+        image: nginx:alpine
+        container_name: cloud-nginx
+        restart: unless-stopped
+        depends_on:
+            - app
+        volumes:
+            - ./public:/var/www/public
+            - ./storage/app/public:/var/www/storage/app/public
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d
+        expose:
+            - "80"
+        networks:
+            - cloud-net
+            - proxy
+
+networks:
+    s3-net:
+        internal: true
+    host-access:
+        driver: bridge
+    proxy:
+        external: true
