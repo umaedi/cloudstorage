@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y \
     libpng-dev libonig-dev libxml2-dev libzip-dev \
     imagemagick libmagickwand-dev \
  && docker-php-ext-install \
-    pdo_mysql mbstring exif pcntl bcmath gd zip \
+    pdo_mysql mbstring exif pcntl bcmath gd zip opcache \
  && pecl install imagick \
  && docker-php-ext-enable imagick \
  && rm -rf /var/lib/apt/lists/*
@@ -14,9 +14,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-COPY . .
+COPY composer.json composer.lock* ./
 
 RUN composer install --no-dev --optimize-autoloader
+
+COPY . .
 
 RUN mkdir -p storage bootstrap/cache \
  && chown -R www-data:www-data storage bootstrap/cache \
