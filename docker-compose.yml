@@ -13,8 +13,7 @@ services:
             - ./.env:/var/www/.env
             - ./storage:/var/www/storage
         networks:
-            - cloud-net
-            - host-access
+            - proxy
 
     web:
         image: nginx:alpine
@@ -29,13 +28,8 @@ services:
         expose:
             - "80"
         networks:
-            - cloud-net
             - proxy
 
 networks:
-    cloud-net:
-        internal: true
-    host-access:
-        driver: bridge
     proxy:
         external: true
