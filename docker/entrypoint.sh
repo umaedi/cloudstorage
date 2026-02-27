@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+# Start cron service
+service cron start
+
 # Fix permissions
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
