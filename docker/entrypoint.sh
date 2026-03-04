@@ -2,7 +2,7 @@
 set -e
 
 echo "Starting scheduler..."
-php artisan schedule:work &
+su -s /bin/sh -c "nohup php artisan schedule:work > storage/logs/scheduler.log 2>&1 &" www-data
 
 # Fix permissions
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
