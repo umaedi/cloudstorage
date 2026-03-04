@@ -11,3 +11,6 @@ use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('notifications:send')->everyMinute();
 
+Schedule::call(function () {
+    file_put_contents(storage_path('logs/cron-test.log'), now()." CRON JALAN\n", FILE_APPEND);
+})->everyMinute();
