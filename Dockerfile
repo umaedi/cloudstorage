@@ -12,7 +12,6 @@ RUN apt-get update && apt-get install -y \
    libxml2-dev \
    libzip-dev \
    libsqlite3-dev \
-   cron \
    && docker-php-ext-configure gd --with-freetype --with-jpeg \
    && docker-php-ext-install \
    pdo_mysql \
@@ -40,12 +39,6 @@ RUN mkdir -p storage bootstrap/cache database \
    && touch database/database.sqlite \
    && chown www-data:www-data database/database.sqlite \
    && chmod 664 database/database.sqlite
-
-# Add crontab configuration
-RUN echo "* * * * * www-data cd /var/www && php artisan schedule:run >> /dev/null 2>&1" > /etc/cron.d/laravel-cron \
-   && chmod 0644 /etc/cron.d/laravel-cron \
-   && crontab /etc/cron.d/laravel-cron
-
 
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 #COPY docker/php/custom.ini /usr/local/etc/php/conf.d/custom.ini

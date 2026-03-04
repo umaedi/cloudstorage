@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-echo "Starting cron..."
-cron
+echo "Starting scheduler..."
+php artisan schedule:work &
 
 # Fix permissions
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
