@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-# Start cron service
-service cron start
+echo "Starting cron..."
+cron
 
 # Fix permissions
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
@@ -12,5 +12,5 @@ if [ ! -L /var/www/public/storage ]; then
     php artisan storage:link
 fi
 
-# Execute the main command
+echo "Starting php-fpm..."
 exec "$@"

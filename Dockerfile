@@ -42,7 +42,7 @@ RUN mkdir -p storage bootstrap/cache database \
    && chmod 664 database/database.sqlite
 
 # Add crontab configuration
-RUN echo "* * * * * cd /var/www && php artisan schedule:run >> /dev/null 2>&1" > /etc/cron.d/laravel-cron \
+RUN echo "* * * * * www-data cd /var/www && php artisan schedule:run >> /dev/null 2>&1" > /etc/cron.d/laravel-cron \
    && chmod 0644 /etc/cron.d/laravel-cron \
    && crontab /etc/cron.d/laravel-cron
 
