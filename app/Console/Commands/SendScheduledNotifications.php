@@ -53,7 +53,7 @@ class SendScheduledNotifications extends Command
                         if ($notification->is_multicast) {
                             // Mengambil semua token FCM yang terdaftar
                             $tokens = FcmToken::pluck('fcm_token')->toArray();
-                            
+
                             if (empty($tokens)) {
                                 Log::warning("No FCM tokens found for multicast.");
                                 continue;
@@ -91,7 +91,7 @@ class SendScheduledNotifications extends Command
                                 continue;
                             }
                         }
-                        
+
                         Log::info("Berhasil mengirim notifikasi ID: {$notification->id}");
                         // Update status setelah sukses kirim
                         $notification->update(['status' => 'sent']);
