@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Http\Services\FirebaseService;
 use App\Models\Notification;
+use App\Models\FcmToken;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -24,9 +25,6 @@ class SendScheduledNotifications extends Command
     protected $description = 'Send scheduled push notifications';
 
     protected $firebaseService;
-    // Note: tokenController is in constructor signature but not injected. Assuming it might be used via another way or we need to adjust based on your actual codebase.
-    // For now, replicating the provided structure.
-    protected $tokenController;
 
     /**
      * Create a new command instance.
@@ -53,30 +51,27 @@ class SendScheduledNotifications extends Command
                 foreach ($notifications as $notification) {
                     try {
                         if ($notification->is_multicast) {
-                            // TODO: Implement the logic to get tokens from TokenController or similar source
-                            // as $this->tokenController is not injected in the constructor.
-                            // Currently using a placeholder or assuming it's available. If TokenController is needed, 
-                            // it should be injected via constructor or resolved from container.
-                            $tokens = []; // Placeholder. Please adjust to fetch actual tokens.
-                            //$tokens = $this->tokenController->getTokens(); 
+                            // Mengambil semua token FCM yang terdaftar
+                            $tokens = FcmToken::pluck('fcm_token')->toArray();
                             
                             if (empty($tokens)) {
                                 Log::warning("No FCM tokens found for multicast.");
                                 continue;
                             }
 
-                            $report = $this->firebaseService->sendPushNotificationToMultipleDevices(
+                            $results = $this->firebaseService->sendPushNotificationToMultipleDevices(
                                 $tokens,
                                 $notification->title,
                                 $notification->body,
                                 $notification->image
                             );
 
-                            if ($report->hasFailures()) {
-                                foreach ($report->failures()->tokens() as $failedToken) {
-                                    Log::warning("Failed to send to token: {$failedToken}");
-                                }
-                            }
+                            // FirebaseService::sendPushNotificationToMultipleDevices di project ini
+                            // mengembalikan array berisi info batch, bukan object report.
+                            $totalSuccess = array_sum(array_column($results, 'success'));
+                            $totalFailures = array_sum(array_column($results, 'failures'));
+
+                            Log::info("Multicast sent. Success: {$totalSuccess}, Failures: {$totalFailures}");
 
                         } else {
                             if (!$notification->fcm_token) {
@@ -97,7 +92,7 @@ class SendScheduledNotifications extends Command
                             }
                         }
                         
-                        Log::info('Berhasil mengirim notifikasi');
+                        Log::info("Berhasil mengirim notifikasi ID: {$notification->id}");
                         // Update status setelah sukses kirim
                         $notification->update(['status' => 'sent']);
 
