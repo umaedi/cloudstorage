@@ -12,6 +12,10 @@ services:
         volumes:
             - ./.env:/var/www/.env
             - ./storage:/var/www/storage
+            - /etc/localtime:/etc/localtime:ro
+            - /etc/timezone:/etc/timezone:ro
+        environment:
+            - TZ=Asia/Jakarta
         networks:
             - proxy
 
